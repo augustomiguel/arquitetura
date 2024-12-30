@@ -1,0 +1,35 @@
+; XOR
+xor1 | MAR = SP = SP - 1 | Carregar TOS para MDR
+xor2 | MDR = NOT MDR | Inverter bits de MDR
+xor3 | SP = SP - 1 | Carregar o próximo valor da pilha para MDR
+xor4 | MDR = TOS AND MDR | Realizar AND entre TOS e MDR invertido
+xor5 | SP = SP - 1 | Carregar o próximo valor da pilha para MDR
+xor6 | MDR = MDR OR TOS | Realizar OR entre o resultado do AND e TOS
+xor7 | TOS = MDR | Armazenar o resultado na pilha
+
+-------------------------------------------------------------------------
+
+; Endereços de memória símbólicos para representar o tratamento da interrupção ou exceção.
+END_INT .data 0x1234 
+END_EXC .data 0x5678 
+
+; Interrupção
+interrupt1 | IR = MDR | Carrega a instrução do endereço de memória apontado por MDR
+interrupt2 | if (IR == INT) goto handle_interrupt | Verifica se é uma instrução de interrupção
+interrupt3 | goto fetch | Caso contrário, continua o fetch normalmente
+
+handle_interrupt: ; Rotina para tratar a interrupção
+interrupt4 | SP = SP - 1 | Decrementa o ponteiro da pilha
+interrupt5 | M[SP] = PC | Salva o endereço atual do PC na pilha
+interrupt6 | PC = END_INT | Pula para o endereço de tratamento de interrupção
+interrupt7 | goto fetch | Retorna ao fetch após o tratamento
+
+; Exceção
+exception1 | if (EXC) goto handle_exception | Verifica se há exceção
+exception2 | goto fetch | Caso contrário, continua o fetch normalmente
+
+handle_exception: ; Rotina para tratar a exceção
+exception3 | SP = SP - 1 | Decrementa o ponteiro da pilha
+exception4 | M[SP] = PC | Salva o endereço atual do PC na pilha
+exception5 | PC = END_EXC | Pula para o endereço de tratamento de exceção
+exception6 | goto fetch | Retorna ao fetch após o tratamento
